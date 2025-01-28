@@ -10,6 +10,9 @@ Update Petugas
 ![image](https://github.com/user-attachments/assets/43d726b6-6fd9-47d3-99c3-848018d67c26)
 Fungsi Delete
 ![image](https://github.com/user-attachments/assets/d2082ba3-9606-41b2-924e-e834230bd1bf)
+Fungsi Search
+![image](https://github.com/user-attachments/assets/8442c945-7895-4ad1-8b32-8574562d6ae9)
+
 
 Home Hewan
 ![image](https://github.com/user-attachments/assets/12f0e428-6ad6-4ec0-92c5-fdffc85d7729)
@@ -47,4 +50,7 @@ Update Monitoring
 ![image](https://github.com/user-attachments/assets/29174b57-708a-40a1-988d-6e3c82226273)
 Fungsi Delete
 ![image](https://github.com/user-attachments/assets/b970b1b6-028b-4952-9c87-6737fc637659)
+Fungsi Search
+![Uploading image.png…]()
+
 
