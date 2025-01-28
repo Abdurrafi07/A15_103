@@ -149,19 +149,26 @@ fun HomeStatus(
 }
 
 @Composable
-fun DeleteDialog(onDismiss: () -> Unit, onDelete: () -> Unit) {
-    androidx.compose.material3.AlertDialog(
+fun DeleteDialog(
+    onDismiss: () -> Unit,
+    onDelete: () -> Unit
+) {
+    AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Confirm Delete") },
-        text = { Text("Are you sure you want to delete this Hewan?") },
+        title = {
+            Text(text = "Konfirmasi Hapus")
+        },
+        text = {
+            Text(text = "Apakah Anda yakin ingin menghapus data ini?")
+        },
         confirmButton = {
-            TextButton(onClick = onDelete) {
-                Text("Delete")
+            Button(onClick = onDelete) {
+                Text("Hapus")
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
+            Button(onClick = onDismiss) {
+                Text("Batal")
             }
         }
     )

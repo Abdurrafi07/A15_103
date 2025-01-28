@@ -13,7 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -42,6 +42,8 @@ fun HomeMonitoringScreen(
     viewModel: HomeMonitoringViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val showDialog = remember { mutableStateOf(false) }
+    val selectedMonitoring = remember { mutableStateOf<Monitoring?>(null) }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -69,9 +71,20 @@ fun HomeMonitoringScreen(
             retryAction = { viewModel.getMonitoring() },
             modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,
-            onDeleteClick = {
-                viewModel.deleteMonitoring(it.idMonitoring)
+            onDeleteClick = { monitoring ->
+                selectedMonitoring.value = monitoring
+                showDialog.value = true
+            }
+        )
+    }
+
+    if (showDialog.value && selectedMonitoring.value != null) {
+        DeleteDialog(
+            onDismiss = { showDialog.value = false },
+            onDelete = {
+                viewModel.deleteMonitoring(selectedMonitoring.value!!.idMonitoring)
                 viewModel.getMonitoring()
+                showDialog.value = false
             }
         )
     }
@@ -182,4 +195,23 @@ fun MonitoringCard(
             )
         }
     }
+}
+
+@Composable
+fun DeleteDialog(onDismiss: () -> Unit, onDelete: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Konfirmasi Penghapusan") },
+        text = { Text("Apakah Anda yakin ingin menghapus Monitoring ini?") },
+        confirmButton = {
+            TextButton(onClick = onDelete) {
+                Text("Hapus")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Batal")
+            }
+        }
+    )
 }

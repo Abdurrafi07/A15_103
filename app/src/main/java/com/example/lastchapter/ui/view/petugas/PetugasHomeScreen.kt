@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,6 +30,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -59,6 +62,8 @@ fun HomePetugasScreen(
     viewModel: HomePetugasViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val showDialog = remember { mutableStateOf(false) }
+    val selectedPetugas = remember { mutableStateOf<Petugas?>(null) }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -87,11 +92,48 @@ fun HomePetugasScreen(
             modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,
             onDeleteClick = {
-                viewModel.deletePetugas(it.idPetugas)
-                viewModel.getPetugas()
+                selectedPetugas.value = it
+                showDialog.value = true
             }
         )
     }
+
+    if (showDialog.value && selectedPetugas.value != null) {
+        DeleteDialog(
+            onDismiss = { showDialog.value = false },
+            onDelete = {
+                viewModel.deletePetugas(selectedPetugas.value!!.idPetugas)
+                viewModel.getPetugas()
+                showDialog.value = false
+            }
+        )
+    }
+}
+
+@Composable
+fun DeleteDialog(
+    onDismiss: () -> Unit,
+    onDelete: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "Konfirmasi Hapus")
+        },
+        text = {
+            Text(text = "Apakah Anda yakin ingin menghapus data ini?")
+        },
+        confirmButton = {
+            Button(onClick = onDelete) {
+                Text("Hapus")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Batal")
+            }
+        }
+    )
 }
 
 @Composable
@@ -125,7 +167,6 @@ fun HomeStatus(
         }
     }
 }
-
 
 @Composable
 fun OnLoading(modifier: Modifier = Modifier) {
@@ -180,7 +221,6 @@ fun PetugasLayout(
         }
     }
 }
-
 
 @Composable
 fun PetugasCard(
