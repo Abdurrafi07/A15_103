@@ -51,6 +51,4 @@ Update Monitoring
 Fungsi Delete
 ![image](https://github.com/user-attachments/assets/b970b1b6-028b-4952-9c87-6737fc637659)
 Fungsi Search
-![Uploading image.png…]()
-
-
+![image](https://github.com/user-attachments/assets/4e77ea78-7e19-45c9-a29e-aff3dbd771ca)
