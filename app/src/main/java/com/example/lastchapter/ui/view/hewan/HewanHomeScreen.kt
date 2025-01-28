@@ -46,17 +46,29 @@ fun HomeHewanScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val showDialog = remember { mutableStateOf(false) }
     val selectedHewan = remember { mutableStateOf<Hewan?>(null) }
+    val searchQuery = remember { mutableStateOf("") }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CostumeTopAppBar(
-                title = DestinasiHomeHewan.titleRes,
-                canNavigateBack = true,
-                scrollBehavior = scrollBehavior,
-                onRefresh = { viewModel.getHewan() },
-                navigateUp = navigateBack
-            )
+            Column {
+                CostumeTopAppBar(
+                    title = DestinasiHomeHewan.titleRes,
+                    canNavigateBack = true,
+                    scrollBehavior = scrollBehavior,
+                    onRefresh = { viewModel.getHewan() },
+                    navigateUp = navigateBack
+                )
+                TextField(
+                    value = searchQuery.value,
+                    onValueChange = { searchQuery.value = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    placeholder = { Text("Cari Hewan...") },
+                    singleLine = true
+                )
+            }
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -72,6 +84,7 @@ fun HomeHewanScreen(
             homeUiState = viewModel.beastUIState,
             retryAction = { viewModel.getHewan() },
             modifier = Modifier.padding(innerPadding),
+            searchQuery = searchQuery.value,
             onDetailClick = onDetailClick,
             onDeleteClick = { hewan ->
                 selectedHewan.value = hewan
@@ -89,6 +102,42 @@ fun HomeHewanScreen(
                 showDialog.value = false
             }
         )
+    }
+}
+
+@Composable
+fun HomeStatus(
+    homeUiState: HomebeastUiState,
+    retryAction: () -> Unit,
+    modifier: Modifier = Modifier,
+    searchQuery: String,
+    onDeleteClick: (Hewan) -> Unit = {},
+    onDetailClick: (String) -> Unit
+) {
+    when (homeUiState) {
+        is HomebeastUiState.Loading -> {
+            OnLoading(modifier = modifier.fillMaxSize())
+        }
+        is HomebeastUiState.Success -> {
+            val filteredHewan = homeUiState.hewan.filter {
+                it.namaHewan.contains(searchQuery, ignoreCase = true)
+            }
+            if (filteredHewan.isEmpty()) {
+                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = "Tidak ada data Hewan")
+                }
+            } else {
+                HewanLayout(
+                    hewan = filteredHewan,
+                    modifier = modifier.fillMaxWidth(),
+                    onDetailClick = { onDetailClick(it.idHewan) },
+                    onDeleteClick = { onDeleteClick(it) }
+                )
+            }
+        }
+        is HomebeastUiState.Error -> {
+            OnError(retryAction, modifier = modifier.fillMaxSize())
+        }
     }
 }
 
